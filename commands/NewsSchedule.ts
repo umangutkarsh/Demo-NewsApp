@@ -30,10 +30,10 @@ export class NewsSchedule implements ISlashCommand {
         http: IHttp,
         persis: IPersistence
     ): Promise<void> {
-        const subcommands = context.getArguments();
-        const room = context.getRoom();
-        const sender = context.getSender();
-        const appUser = (await read.getUserReader().getAppUser()) as IUser;
+        // const subcommands = context.getArguments();
+        // const room = context.getRoom();
+        // const sender = context.getSender();
+        // const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
         const task = {
             id: 'fetchNewsTask',
@@ -49,7 +49,7 @@ export class NewsSchedule implements ISlashCommand {
             id: 'fetchNewsTask',
             when: '3 seconds',
             data: {
-                context,
+                context: context,
             },
         }
 

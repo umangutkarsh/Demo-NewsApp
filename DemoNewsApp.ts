@@ -117,6 +117,11 @@ export class DemoNewsApp extends App {
         await configuration.slashCommands.provideSlashCommand(new NewsStop(this));
         await configuration.slashCommands.provideSlashCommand(new NewsSchedule(this));
 
+        const persistentReader = this.getAccessors().reader.getPersistenceReader();
+        console.log('PersistenceReaderrr: ', persistentReader);
+        console.log('DATa: ', await persistentReader.read('news_channel'));
+
+
 
         configuration.scheduler.registerProcessors([
             {
@@ -158,7 +163,7 @@ export class DemoNewsApp extends App {
                 //     //     persistence,
                 //     // });
                 // },
-                async processor(jobContext, read, modify, http, persis) {
+                processor: async (jobContext, read, modify, http, persis) => {
                     console.log('log1');
 
                     console.log('JobContext: ', jobContext);
@@ -171,27 +176,36 @@ export class DemoNewsApp extends App {
 
                     console.log('log3');
 
-                    // Create an instance of CommandUtility
-                    // const commandUtility = new CommandUtility({
-                    //     app: this,
-                    //     context,
-                    //     read,
-                    //     modify,
-                    //     http,
-                    //     persistence: persis,
-                    // });
+                    console.log('joBContext', jobContext);
 
-                    console.log('log4');
+                    const {context} = jobContext.data;
+                    try {
+                        // Create an instance of CommandUtility
+                        const commandUtility = new CommandUtility({
+                            app: this,
+                            context,
+                            read,
+                            modify,
+                            http,
+                            persistence: persis,
+                        });
 
-                    // // Call fetchNews
-                    // await commandUtility.fetchNews({
-                    //     app: this,
-                    //     context,
-                    //     read,
-                    //     modify,
-                    //     http,
-                    //     persistence: persis,
-                    // });
+                        console.log('log4');
+
+                        // // Call fetchNews
+                        await commandUtility.fetchNews({
+                            app: this,
+                            context,
+                            read,
+                            modify,
+                            http,
+                            persistence: persis,
+                        });
+                        } catch (err) {
+                            this.getLogger().info(err);
+                            console.error(err);
+
+                        }
                     console.log('log5');
 
                 },

@@ -36,9 +36,6 @@
             "name": "ui.interact"
         },
         {
-            "name": "networking"
-        },
-        {
             "name": "message.write"
         },
         {
@@ -52,6 +49,15 @@
         },
         {
             "name": "scheduler"
+        },
+        {
+            "name": "networking"
+        },
+        {
+            "name": "server-setting.read"
+        },
+        {
+            "name": "server-setting.write"
         }
     ]
 }
