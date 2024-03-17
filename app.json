@@ -1,0 +1,15 @@
+{
+    "id": "6b813591-62f5-4f09-8517-76c361aab33b",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.4.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Umang Utkarsh",
+        "homepage": "NA",
+        "support": "NA"
+    },
+    "name": "DemoNews",
+    "nameSlug": "demonews",
+    "classFile": "DemoNewsApp.ts",
+    "description": "A POC for news-aggregator app - gsoc"
+}
