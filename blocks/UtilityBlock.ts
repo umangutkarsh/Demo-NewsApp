@@ -1,5 +1,5 @@
 import { Block } from '@rocket.chat/ui-kit';
-import { getSectionBlock } from '../helpers/blockBuilder';
+import { getImageBlock, getSectionBlock } from '../helpers/blockBuilder';
 
 export async function buildNewsBlock(
     newsIndex: string,
@@ -15,7 +15,7 @@ export async function buildNewsBlock(
     const newsContentBlock = getSectionBlock(newsContent);
     blocks.push(newsContentBlock);
 
-    const newsImageBlock = getSectionBlock(newsImage);
+    const newsImageBlock = getImageBlock(newsTitle, newsImage);
     blocks.push(newsImageBlock);
 
     return blocks;

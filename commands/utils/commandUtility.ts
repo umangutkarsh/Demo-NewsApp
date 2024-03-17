@@ -39,7 +39,6 @@ export class CommandUtility implements ExecutorProps {
         http,
         persistence,
     }: NewsSlashCommandContext) {
-
         const room = context.getRoom();
         const sender = context.getSender();
         const appUser = (await read.getUserReader().getAppUser()) as IUser;
@@ -75,5 +74,60 @@ export class CommandUtility implements ExecutorProps {
             this.app.getLogger().error(`Error while fetching news`);
             console.log(err);
         }
+    }
+
+    public async scheduleNews({
+        app,
+        context,
+        read,
+        modify,
+        http,
+        persistence,
+    }: NewsSlashCommandContext) {
+
+        const task = {
+            id: 'subscribe',
+            interval: '5 seconds',
+            data: {cron: await this.fetchNews({
+                app,
+                context,
+                read,
+                modify,
+                http,
+                persistence,
+            })},
+            skipImmediate: false,
+        }
+        console.log('SCHEDULED!!');
+
+        const onceTask = {
+            id: 'fetchNewsTask',
+            when: '3 seconds',
+            data: {
+                context,
+            },
+        }
+        // await modify.getScheduler().scheduleRecurring(task);
+        await modify.getScheduler().scheduleOnce(onceTask);
+        console.log('Fetched!!!!');
+
+    }
+
+    public async stopNews({
+        app,
+        context,
+        read,
+        modify,
+        http,
+        persistence,
+    }: NewsSlashCommandContext) {
+        const jobId = context.getArguments().join(' ');
+        console.log(context.getArguments());
+
+        console.log('JobId: ', jobId);
+
+        console.log('Fetching stopped');
+
+        await modify.getScheduler().cancelJob(jobId);
     }
 }

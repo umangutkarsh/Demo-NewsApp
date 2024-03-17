@@ -4,7 +4,7 @@ import { IRead, IModify, IHttp, IPersistence } from '@rocket.chat/apps-engine/de
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { sendMessage } from '../lib/sendMessage';
 import { buildNewsBlock } from '../blocks/UtilityBlock';
-import { CommandUtility } from './commandUtility/commandUtility';
+import { CommandUtility } from './utils/commandUtility';
 
 export interface NewsSlashCommandContext {
     app: DemoNewsApp,
@@ -53,7 +53,12 @@ export class NewsCommand implements ISlashCommand {
                 persistence: persis,
                 app: this.app,
             })
-            switch (this.command[0]) {
+            console.log('COMMAND: ', this.command);
+            console.log('COMMAND ARRAY: ', subcommands);
+
+            this.app.getLogger().info(this.command);
+
+            switch (subcommands[0]) {
                 case "fetch":
                     await commandUtility.fetchNews({
                         app: this.app,
@@ -64,11 +69,44 @@ export class NewsCommand implements ISlashCommand {
                         persistence: persis,
                     });
 
+                    console.log('Valid commands: ', subcommands);
+                    this.app.getLogger().info('commands: ', subcommands);
+
+                    break;
+
+                case "schedule":
+                    await commandUtility.scheduleNews({
+                        app: this.app,
+                        context,
+                        read,
+                        modify,
+                        http,
+                        persistence: persis,
+                    });
+
+                    console.log('Valid commands: ', subcommands);
+                    this.app.getLogger().info('commands: ', subcommands);
+
+                    break;
+
+                case "stop":
+                    await commandUtility.stopNews({
+                        app: this.app,
+                        context,
+                        read,
+                        modify,
+                        http,
+                        persistence: persis,
+                    });
+
+                    console.log('Valid commands: ', subcommands);
+                    this.app.getLogger().info('commands: ', subcommands);
+
                     break;
 
                 default:
                     message = `Invalid sub-command`;
-                    console.log('commands: ', subcommands);
+                    console.log('Invalid commands: ', subcommands);
                     this.app.getLogger().info('commands: ', subcommands);
 
                     await sendMessage(modify, room, appUser, message);

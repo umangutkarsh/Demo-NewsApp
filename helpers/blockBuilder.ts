@@ -1,4 +1,4 @@
-import { SectionBlock } from '@rocket.chat/ui-kit';
+import { ImageBlock, SectionBlock } from '@rocket.chat/ui-kit';
 
 export function getSectionBlock(
     labelText: string,
@@ -13,5 +13,18 @@ export function getSectionBlock(
         },
         accessory: accessory,
     };
+    return block;
+}
+
+export function getImageBlock(
+    newsTitle: string,
+    newsImage: string,
+) {
+    const block: ImageBlock = {
+        type: "image",
+        imageUrl: newsImage,
+        altText: newsTitle,
+    }
+
     return block;
 }
