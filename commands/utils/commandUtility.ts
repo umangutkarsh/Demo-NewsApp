@@ -45,6 +45,7 @@ export class CommandUtility implements ExecutorProps {
         const room = context.getRoom();
         const sender = context.getSender();
         const appUser = (await read.getUserReader().getAppUser()) as IUser;
+
         const category = `general`;
         const language = `en`;
         const max_content = `5`;
@@ -80,6 +81,92 @@ export class CommandUtility implements ExecutorProps {
             this.app.getLogger().error(`Error while fetching news`);
             console.log(err);
         }
+    }
+
+    public async fetchNewsTechCrunch({
+        app,
+        context,
+        read,
+        modify,
+        http,
+        persistence,
+    }: NewsSlashCommandContext) {
+        app.getLogger().info(`Methhod techcrunch called`);
+        console.log(`Methhod techcrunch called`);
+
+        const room = context.getRoom();
+        const sender = context.getSender();
+        const appUser = (await read.getUserReader().getAppUser()) as IUser;
+
+        // const techCrunchApi = () => `https://techcrunch.com/wp-json/wp/v2/posts`;
+
+        // try {
+        //     const response = await http.get(techCrunchApi());
+        //     console.log('TechCrunch News: ', response);
+        //     app.getLogger().info(`TechCrunch News: `, response);
+
+        // } catch (err) {
+        //     app.getLogger().info('Error while fetching news. ', err);
+        //     console.log(err);
+        // }
+
+        const getLlama2Api = () => `https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-hf`;
+        const apiToken = `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`;
+        const getLlama2Payload = (prompt) => {
+            const text = prompt;
+
+            const payload = {
+                headers: {
+                    "Authorization": `Bearer ${apiToken}`,
+                },
+                method: "POST",
+                body: JSON.stringify(text),
+            };
+
+            return payload;
+        }
+
+        try {
+            const llama2Response = await http.post(
+                getLlama2Api(),
+                getLlama2Payload({"inputs": "Who are you?"})
+            );
+            // const result = response;
+            console.log('Llama2 Response: ', llama2Response);
+            app.getLogger().info('Llama2 Response: ', llama2Response);
+        } catch (err) {
+            console.log('Error generating llama2 response. ', err);
+            app.getLogger().info('Error generating llama2 response. ', err);
+        }
+
+        // const getMistralApi = () => `https://api.mistral.ai/v1/chat/completions`;
+        // const getMistralPayload = (prompt) => {
+        //     const newsDescription = prompt;
+        //     const data = {
+        //         model: "mistral-small-latest",
+        //         messages: [
+        //             {
+        //                 role: "user",
+        //                 content: newsDescription,
+        //             },
+        //         ],
+        //     };
+        //     const headers = {
+        //         "Content-Type": "application/json",
+        //     };
+
+        //     return {data, headers};
+        // };
+
+        // try {
+        //     const mistralResponse = await http.post(getMistralApi(), getMistralPayload(`Who are you?`));
+        //     console.log('Mistral Response: ', mistralResponse);
+        //     app.getLogger().info('Mistral Response: ', mistralResponse);
+
+        // } catch (err) {
+        //     console.log('Error generating mistral response. ', err);
+        //     app.getLogger().info('Error generating mistral response. ', err);
+        // }
     }
 
     public async fetchNewsRSS({
@@ -140,8 +227,6 @@ export class CommandUtility implements ExecutorProps {
 
         function parseRssItems(xml: string): RssItem[] {
             const items: RssItem[] = [];
-            // This is a very basic parser and might not work for all RSS feeds
-            // You might need to adjust it based on the specific structure of the RSS feed you're parsing
             const itemRegex = /<item>([\s\S]*?)<\/item>/g;
             let match: RegExpExecArray | null;
             while ((match = itemRegex.exec(xml)) !== null) {
@@ -180,7 +265,6 @@ export class CommandUtility implements ExecutorProps {
                 app.getLogger().info(`Item ${i} fetched`);
                 await sendMessage(modify, room, appUser, 'Rss News fetched', newsBlock);
             }
-            // Here you can process the items, e.g., send them as a message in Rocket.Chat
         } catch (error) {
             console.error('Error processing RSS feed:', error);
         }

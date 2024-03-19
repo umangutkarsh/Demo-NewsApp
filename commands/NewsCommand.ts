@@ -74,6 +74,21 @@ export class NewsCommand implements ISlashCommand {
 
                     break;
 
+                case "fetch-techcrunch":
+                    await commandUtility.fetchNewsTechCrunch({
+                        app: this.app,
+                        context,
+                        read,
+                        modify,
+                        http,
+                        persistence: persis,
+                    });
+
+                    console.log('Valid commands: ', subcommands);
+                    this.app.getLogger().info('commands: ', subcommands);
+
+                    break;
+
                 case "fetch-rss":
                     await commandUtility.fetchNewsRSS({
                         app: this.app,
