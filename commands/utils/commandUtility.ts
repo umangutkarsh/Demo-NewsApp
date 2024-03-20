@@ -94,50 +94,69 @@ export class CommandUtility implements ExecutorProps {
         app.getLogger().info(`Methhod techcrunch called`);
         console.log(`Methhod techcrunch called`);
 
+        interface NewsItem {
+            id: number;
+            link: string;
+            title: string;
+            description: string;
+            image_url: string;
+        }
+
         const room = context.getRoom();
         const sender = context.getSender();
         const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
-        // const techCrunchApi = () => `https://techcrunch.com/wp-json/wp/v2/posts`;
+        const techCrunchApi = () => `https://techcrunch.com/wp-json/wp/v2/posts`;
 
-        // try {
-        //     const response = await http.get(techCrunchApi());
-        //     console.log('TechCrunch News: ', response);
-        //     app.getLogger().info(`TechCrunch News: `, response);
+        let newsItems: NewsItem[] = [];
+        try {
+            const response = await http.get(techCrunchApi());
+            // console.log('TechCrunch News: ', response.data);
+            // app.getLogger().info(`TechCrunch News: `, response.data);
 
-        // } catch (err) {
-        //     app.getLogger().info('Error while fetching news. ', err);
-        //     console.log(err);
+            newsItems = response.data?.map((news) => ({
+                id: news.id,
+                link: news.link,
+                title: news.yoast_head_json.title,
+                description: news.yoast_head_json.description,
+                image_url: news.jetpack_featured_media_url
+            })) || [];
+            // console.log('Transformed news: ', newsItems);
+            // app.getLogger().info('Transformed news: ', newsItems);
+
+        } catch (err) {
+            app.getLogger().info('Error while fetching news. ', err);
+            console.log(err);
+        }
+
+        // const getLlama2Api = () => `https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-hf`;
+        // const apiToken = `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`;
+        // const getLlama2Payload = (prompt) => {
+        //     const text = prompt;
+
+        //     const payload = {
+        //         headers: {
+        //             "Authorization": `Bearer ${apiToken}`,
+        //         },
+        //         method: "POST",
+        //         body: JSON.stringify(text),
+        //     };
+
+        //     return payload;
         // }
 
-        const getLlama2Api = () => `https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-hf`;
-        const apiToken = `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`;
-        const getLlama2Payload = (prompt) => {
-            const text = prompt;
-
-            const payload = {
-                headers: {
-                    "Authorization": `Bearer ${apiToken}`,
-                },
-                method: "POST",
-                body: JSON.stringify(text),
-            };
-
-            return payload;
-        }
-
-        try {
-            const llama2Response = await http.post(
-                getLlama2Api(),
-                getLlama2Payload({"inputs": "Who are you?"})
-            );
-            // const result = response;
-            console.log('Llama2 Response: ', llama2Response);
-            app.getLogger().info('Llama2 Response: ', llama2Response);
-        } catch (err) {
-            console.log('Error generating llama2 response. ', err);
-            app.getLogger().info('Error generating llama2 response. ', err);
-        }
+        // try {
+        //     const llama2Response = await http.post(
+        //         getLlama2Api(),
+        //         getLlama2Payload({"inputs": "Who are you?"})
+        //     );
+        //     // const result = response;
+        //     console.log('Llama2 Response: ', llama2Response);
+        //     app.getLogger().info('Llama2 Response: ', llama2Response);
+        // } catch (err) {
+        //     console.log('Error generating llama2 response. ', err);
+        //     app.getLogger().info('Error generating llama2 response. ', err);
+        // }
 
         // const getMistralApi = () => `https://api.mistral.ai/v1/chat/completions`;
         // const getMistralPayload = (prompt) => {
@@ -167,6 +186,54 @@ export class CommandUtility implements ExecutorProps {
         //     console.log('Error generating mistral response. ', err);
         //     app.getLogger().info('Error generating mistral response. ', err);
         // }
+
+        const getOpenAIApiChatCompletion = () => `https://api.openai.com/v1/chat/completions`;
+        const openAIApiKey = `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`;
+        const getOpenAIPayload = (newsContent) => {
+            const newsCategories = `General, Business and Finance, Technology, Entertainment, Sports, Politics, Health, International, Investigative Journalism`;
+            const prompt = `This news -> ${newsContent} falls under which category out of these -> ${newsCategories}, answer in one word`
+            const data = {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: prompt,
+                    },
+                ]
+            }
+            const headers = {
+                'Content-Type': "application/json",
+                "Authorization": `Bearer ${openAIApiKey}`,
+            }
+
+            return { headers, data };
+        }
+
+        for (let i=0 ; i<newsItems.slice(0, 2).length ; i++) {
+            try {
+                const openAIResponse = await http.post(
+                    getOpenAIApiChatCompletion(),
+                    getOpenAIPayload(newsItems[i].description),
+                );
+                console.log(`News Description ${i}: `, newsItems[i].description);
+                app.getLogger().info(`News Description ${i}: `, newsItems[i].description);
+
+                console.log(`News category response ${i}: `, openAIResponse.content);
+                app.getLogger().info(`News category response ${i}: `, openAIResponse.content);
+
+                // const openAIResponse = await http.post(
+                //     getOpenAIApiChatCompletion(),
+                //     getOpenAIPayload('New'),
+                // );
+                // console.log('Chat response: ', openAIResponse);
+                // app.getLogger().info(openAIResponse)
+
+            } catch (err) {
+                console.log('Error generating OpenAI response ', err);
+                app.getLogger().info('Error generating OpenAI response ', err);
+            }
+        }
+
     }
 
     public async fetchNewsRSS({
