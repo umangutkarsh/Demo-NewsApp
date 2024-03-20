@@ -209,7 +209,7 @@ export class CommandUtility implements ExecutorProps {
             return { headers, data };
         }
 
-        for (let i=0 ; i<newsItems.slice(0, 2).length ; i++) {
+        for (let i=newsItems.length-1 ; i>=newsItems.length-3 ; i--) {
             try {
                 const openAIResponse = await http.post(
                     getOpenAIApiChatCompletion(),
