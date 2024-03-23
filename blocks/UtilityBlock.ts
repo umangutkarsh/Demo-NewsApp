@@ -43,3 +43,26 @@ export async function buildRSSNewsBlock(
 
     return blocks;
 }
+
+export async function buildTechCrunchNewsBlock(
+    newsTitle: string,
+    newsContent: string,
+    newsLink: string,
+    newsImage: string,
+) {
+    const blocks: Block[] = [];
+
+    const newsTitleBlock = getSectionBlock(newsTitle);
+    blocks.push(newsTitleBlock);
+
+    const newsContentBlock = getSectionBlock(newsContent);
+    blocks.push(newsContentBlock);
+
+    const newsLinkBlock = getSectionBlock(newsLink);
+    blocks.push(newsLinkBlock);
+
+    const newsImageBlock = getImageBlock(newsTitle, newsImage);
+    blocks.push(newsImageBlock);
+
+    return blocks;
+}

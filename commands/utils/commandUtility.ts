@@ -209,29 +209,40 @@ export class CommandUtility implements ExecutorProps {
             return { headers, data };
         }
 
-        for (let i=newsItems.length-1 ; i>=newsItems.length-3 ; i--) {
-            try {
-                const openAIResponse = await http.post(
-                    getOpenAIApiChatCompletion(),
-                    getOpenAIPayload(newsItems[i].description),
-                );
-                console.log(`News Description ${i}: `, newsItems[i].description);
-                app.getLogger().info(`News Description ${i}: `, newsItems[i].description);
+        try {
+            for (let i=newsItems.length-1 ; i>=newsItems.length-4 ; i--) {
+                    const openAIResponse = await http.post(
+                        getOpenAIApiChatCompletion(),
+                        getOpenAIPayload(newsItems[i].description),
+                    );
+                    console.log(`News Description ${i}: `, newsItems[i].description);
+                    app.getLogger().info(`News Description ${i}: `, newsItems[i].description);
 
-                console.log(`News category response ${i}: `, openAIResponse.content);
-                app.getLogger().info(`News category response ${i}: `, openAIResponse.content);
+                    console.log(`News category response ${i}: `, openAIResponse.content);
+                    app.getLogger().info(`News category response ${i}: `, openAIResponse.content);
 
-                // const openAIResponse = await http.post(
-                //     getOpenAIApiChatCompletion(),
-                //     getOpenAIPayload('New'),
-                // );
-                // console.log('Chat response: ', openAIResponse);
-                // app.getLogger().info(openAIResponse)
+                    var message = `News fetched`;
+                    await sendMessage(modify, room, appUser, message);
 
-            } catch (err) {
-                console.log('Error generating OpenAI response ', err);
-                app.getLogger().info('Error generating OpenAI response ', err);
-            }
+                    const newsBlock = await buildNewsBlock(
+                        newsItems[i].title,
+                        newsItems[i].description,
+                        newsItems[i].link,
+                        newsItems[i].image_url,
+                    )
+                    await sendMessage(modify, room, appUser, message, newsBlock);
+
+                    // const openAIResponse = await http.post(
+                    //     getOpenAIApiChatCompletion(),
+                    //     getOpenAIPayload('New'),
+                    // );
+                    // console.log('Chat response: ', openAIResponse);
+                    // app.getLogger().info(openAIResponse)
+
+                }
+        } catch (err) {
+            console.log('Error generating OpenAI response ', err);
+            app.getLogger().info('Error generating OpenAI response ', err);
         }
 
     }
