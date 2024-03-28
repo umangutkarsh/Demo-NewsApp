@@ -164,19 +164,19 @@ export class DemoNewsApp extends App {
                 //     // });
                 // },
                 processor: async (jobContext, read, modify, http, persis) => {
-                    console.log('log1');
+                    console.log('scheduled-recurring');
 
-                    console.log('JobContext: ', jobContext);
-                    console.log('log-1.1');
-                    console.log('log-1.2');
-                    console.log('log2');
-                    console.log('log2.1');
+                    // console.log('JobContext: ', jobContext);
+                    // console.log('log-1.1');
+                    // console.log('log-1.2');
+                    // console.log('log2');
+                    // console.log('log2.1');
 
-                    console.log('log2.2');
+                    // console.log('log2.2');
 
-                    console.log('log3');
+                    // console.log('log3');
 
-                    console.log('joBContext', jobContext);
+                    // console.log('joBContext', jobContext);
 
                     const {context} = jobContext.data;
                     try {

@@ -53,6 +53,7 @@ export class NewsSchedule implements ISlashCommand {
             },
         }
 
-        await modify.getScheduler().scheduleOnce(onceTask);
+        // await modify.getScheduler().scheduleOnce(onceTask);
+        await modify.getScheduler().scheduleRecurring(task);
     }
 }
