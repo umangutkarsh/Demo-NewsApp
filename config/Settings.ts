@@ -3,9 +3,22 @@ import { ISetting, SettingType } from '@rocket.chat/apps-engine/definition/setti
 export enum NewsSetting {
     NewsChannel = "news_channels",
     NewsSource = "news_source",
+    API_KEY = "api-key",
 }
 
 export const settings: Array<ISetting> = [
+    {
+        id: NewsSetting.API_KEY,
+        section: "NewsSettings",
+        public: false,
+        type: SettingType.STRING,
+        value: "",
+        packageValue: "",
+        hidden: false,
+        i18nLabel: "Source API Key",
+        i18nDescription: "This is where API Key of the source (if required) would be taken",
+        required: true,
+    },
     {
         id: NewsSetting.NewsChannel,
         section: "NewsSettings",

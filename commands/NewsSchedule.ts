@@ -35,7 +35,7 @@ export class NewsSchedule implements ISlashCommand {
         // const sender = context.getSender();
         // const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
-        const task = {
+        const recurringTask = {
             id: 'fetchNewsTask',
             interval: '3 seconds',
             data: {
@@ -54,6 +54,6 @@ export class NewsSchedule implements ISlashCommand {
         }
 
         // await modify.getScheduler().scheduleOnce(onceTask);
-        await modify.getScheduler().scheduleRecurring(task);
+        await modify.getScheduler().scheduleRecurring(recurringTask);
     }
 }

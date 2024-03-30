@@ -10,6 +10,7 @@ import { buildNewsBlock, buildRSSNewsBlock } from '../../blocks/UtilityBlock';
 // import * as Parser from 'rss-parser';
 // const https = require('https');
 import * as https from 'https';
+import { NewsSetting } from '../../config/Settings';
 
 export class CommandUtility implements ExecutorProps {
     context: SlashCommandContext;
@@ -50,7 +51,8 @@ export class CommandUtility implements ExecutorProps {
         const language = `en`;
         const max_content = `5`;
         const query = `Technology`;
-        const apiKey = `a23a2e02df0cd1192f391ee41e5a8fcc`;
+        const apiKey = (await read.getEnvironmentReader().getSettings().getValueById(NewsSetting.API_KEY)) as string;
+        // a23a2e02df0cd1192f391ee41e5a8fcc
 
         const getTopHeadlinesEndpoint = () => `https://gnews.io/api/v4/top-headlines?category=${category}&lang=${language}&max=${max_content}&apikey=${apiKey}`;
 
