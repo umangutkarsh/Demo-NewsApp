@@ -118,7 +118,7 @@ export class CommandUtility implements ExecutorProps {
         const sender = context.getSender();
         const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
-        const techCrunchApi = () => `https://techcrunch.com/wp-json/wp/v2/posts`;
+        const techCrunchApi = () => `${process.env.TECHCRUNCH_API}`;
 
         let newsItems: NewsItem[] = [];
         try {
@@ -141,8 +141,8 @@ export class CommandUtility implements ExecutorProps {
             console.log(err);
         }
 
-        // const getLlama2Api = () => `https://api-inference.huggingface.co/models/meta-llama/Llama-2-7b-hf`;
-        // const apiToken = `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`;
+        // const getLlama2Api = () => `${process.env.LLAMA2_HUGGING_FACE_API}`;
+        // const apiToken = `${process.env.LLAMA2_API_TOKEN}`;
         // const getLlama2Payload = (prompt) => {
         //     const text = prompt;
 
@@ -170,7 +170,7 @@ export class CommandUtility implements ExecutorProps {
         //     app.getLogger().info('Error generating llama2 response. ', err);
         // }
 
-        // const getMistralApi = () => `https://api.mistral.ai/v1/chat/completions`;
+        // const getMistralApi = () => `${process.env.MISTRAL_CHAT_COMPLETION_API}`;
         // const getMistralPayload = (prompt) => {
         //     const newsDescription = prompt;
         //     const data = {
@@ -200,7 +200,7 @@ export class CommandUtility implements ExecutorProps {
         // }
 
         const getOpenAIApiChatCompletion = () => `https://api.openai.com/v1/chat/completions`;
-        const openAIApiKey = `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`;
+        const openAIApiKey = `${process.env.OPENAI_API_KEY}`;
         const getOpenAIPayload = (newsContent) => {
             const newsCategories = `General, Business and Finance, Technology, Entertainment, Sports, Politics, Health, International, Investigative Journalism`;
             const prompt = `This news -> ${newsContent} falls under which category out of these -> ${newsCategories}, answer in one word`
