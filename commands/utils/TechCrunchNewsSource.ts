@@ -1,4 +1,4 @@
-import { NewsSource } from './NewsSource';
+import { NewsSource } from '../../definitions/NewsSource';
 
 export class TechCrunchNewsSource extends NewsSource {
     constructor(
