@@ -11,6 +11,7 @@ import { buildNewsBlock, buildRSSNewsBlock } from '../../blocks/UtilityBlock';
 // const https = require('https');
 import * as https from 'https';
 import { NewsSetting } from '../../config/Settings';
+import { Block } from '@rocket.chat/ui-kit';
 
 export class CommandUtility implements ExecutorProps {
     context: SlashCommandContext;
@@ -51,7 +52,8 @@ export class CommandUtility implements ExecutorProps {
         const language = `en`;
         const max_content = `5`;
         const query = `Technology`;
-        const apiKey = (await read.getEnvironmentReader().getSettings().getValueById(NewsSetting.API_KEY)) as string;
+        // const apiKey = (await read.getEnvironmentReader().getSettings().getValueById(NewsSetting.API_KEY)) as string;
+        const apiKey = `a23a2e02df0cd1192f391ee41e5a8fcc`;
         // a23a2e02df0cd1192f391ee41e5a8fcc
 
         const getTopHeadlinesEndpoint = () => `https://gnews.io/api/v4/top-headlines?category=${category}&lang=${language}&max=${max_content}&apikey=${apiKey}`;
@@ -64,9 +66,14 @@ export class CommandUtility implements ExecutorProps {
             console.log(response);
 
             var message = `News fetched`;
-            await sendMessage(modify, room, appUser, message);
+            // await sendMessage(modify, room, appUser, message);
+
 
             let news = response?.data?.articles;
+            console.log('NewsLength: ', news.length);
+            console.log('News: ', news);
+
+            let allNewsBlocks: Array<Array<Block>> = [];
 
             for (let i=0 ; i<news.length ; i++) {
 
@@ -75,9 +82,12 @@ export class CommandUtility implements ExecutorProps {
                     news[i].title,
                     news[i].description,
                     news[i].image,
-                )
-                await sendMessage(modify, room, appUser, message, newsBlock);
+                );
+                allNewsBlocks.push(newsBlock);
             }
+            await sendMessage(modify, room, appUser, message, allNewsBlocks);
+            console.log('NEWS FETCHED');
+
 
         } catch (err) {
             this.app.getLogger().error(`Error while fetching news`);
@@ -211,7 +221,11 @@ export class CommandUtility implements ExecutorProps {
             return { headers, data };
         }
 
+        let allNewsBlocks: Array<Array<Block>> = [];
+
         try {
+            var message = `News fetched`;
+
             for (let i=newsItems.length-1 ; i>=newsItems.length-4 ; i--) {
                     const openAIResponse = await http.post(
                         getOpenAIApiChatCompletion(),
@@ -223,16 +237,16 @@ export class CommandUtility implements ExecutorProps {
                     console.log(`News category response ${i}: `, openAIResponse.content);
                     app.getLogger().info(`News category response ${i}: `, openAIResponse.content);
 
-                    var message = `News fetched`;
-                    await sendMessage(modify, room, appUser, message);
+                    // await sendMessage(modify, room, appUser, message);
 
                     const newsBlock = await buildNewsBlock(
                         newsItems[i].title,
                         newsItems[i].description,
                         newsItems[i].link,
                         newsItems[i].image_url,
-                    )
-                    await sendMessage(modify, room, appUser, message, newsBlock);
+                    );
+                    allNewsBlocks.push(newsBlock);
+
 
                     // const openAIResponse = await http.post(
                     //     getOpenAIApiChatCompletion(),
@@ -242,6 +256,7 @@ export class CommandUtility implements ExecutorProps {
                     // app.getLogger().info(openAIResponse)
 
                 }
+                await sendMessage(modify, room, appUser, message, allNewsBlocks);
         } catch (err) {
             console.log('Error generating OpenAI response ', err);
             app.getLogger().info('Error generating OpenAI response ', err);
@@ -333,6 +348,7 @@ export class CommandUtility implements ExecutorProps {
         try {
             const items = await fetchRssFeed(rssUrl);
             console.log('RSS-parsed: ', items);
+            let allNewsBlocks: Array<Array<Block>> = [];
 
             for (let i=0 ; i<items.slice(0, 3).length ; i++) {
 
@@ -342,9 +358,10 @@ export class CommandUtility implements ExecutorProps {
                     items[i].description,
                     items[i].link,
                 )
+                allNewsBlocks.push(newsBlock);
                 app.getLogger().info(`Item ${i} fetched`);
-                await sendMessage(modify, room, appUser, 'Rss News fetched', newsBlock);
             }
+            await sendMessage(modify, room, appUser, 'Rss News fetched', allNewsBlocks);
         } catch (error) {
             console.error('Error processing RSS feed:', error);
         }

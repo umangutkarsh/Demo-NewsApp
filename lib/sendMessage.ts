@@ -8,7 +8,7 @@ export async function sendMessage(
     room: IRoom,
     sender: IUser,
     message: string,
-    blocks?: Array<Block>
+    blocks?: Array<Array<Block>>
 ): Promise<string> {
     const msg = modify
         .getCreator()
@@ -18,8 +18,12 @@ export async function sendMessage(
         .setParseUrls(true)
         .setText(message);
 
+        console.log('Blocks: ', blocks);
+
     if (blocks !== undefined) {
-        msg.setBlocks(blocks);
+        for (let i=0 ; i<blocks.length ; i++) {
+            msg.setBlocks(blocks[i]);
+        }
     }
 
     return await modify.getCreator().finish(msg);
