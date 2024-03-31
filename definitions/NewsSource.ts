@@ -26,7 +26,7 @@ export class NewsSource {
         // logic to save news to persistence storage
     }
 
-    async getNews(persistence: IPersistence, persistenceRead: IPersistenceRead, filter) {
+    async getNews(persistence: IPersistence, filter) {
         // logic to get news from persistence storage
         // return the news according to filter
     }

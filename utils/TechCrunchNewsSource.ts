@@ -9,7 +9,7 @@ import { buildNewsBlock } from '../blocks/UtilityBlock';
 import { sendMessage } from '../lib/sendMessage';
 
 export class TechCrunchNewsSource extends NewsSource {
-    news: NewsItem[] = [];
+    static news: NewsItem[] = [];
     fetchUrl = `https://techcrunch.com/wp-json/wp/v2/posts`;
 
     constructor(config) {
@@ -18,28 +18,62 @@ export class TechCrunchNewsSource extends NewsSource {
 
     public async fetchNews(
         app: DemoNewsApp,
-        context: SlashCommandContext,
-        read: IRead,
-        modify: IModify,
-        http: IHttp,
-        persistence: IPersistence,
         filter?: {}
+        ...other_params,
     ): Promise<void> {
-        try {
-            const response = await http.get(this.fetchUrl);
-            app.getLogger().info(response);
-            console.log(response);
-
-            let news = response?.data;
-            console.log('News: ', news);
-
-        } catch (err) {
-            app.getLogger().error(`Error while fetching news`);
-            console.log(err);
-        }
+        // logic to fetch news and store in NewsItem format
     }
 
-    static determineCategory(newsItem: NewsItem) {
+    // static async determineCategory(context: SlashCommandContext, read: IRead, http: IHttp) {
 
+    //     const room = context.getRoom();
+    //     const appUser = (await read.getUserReader().getAppUser()) as IUser;
+
+
+    //     const getOpenAIApiChatCompletion = () => `https://api.openai.com/v1/chat/completions`;
+    //     const openAIApiKey = `${process.env.OPENAI_API_KEY}`;
+    //     const getOpenAIPayload = (newsContent) => {
+    //         const newsCategories = `General, Business and Finance, Technology, Entertainment, Sports, Politics, Health, International, Investigative Journalism`;
+    //         const prompt = `This news -> ${newsContent} falls under which category out of these -> ${newsCategories}, answer in one word`
+    //         const data = {
+    //             model: "gpt-3.5-turbo",
+    //             messages: [
+    //                 {
+    //                     role: "system",
+    //                     content: prompt,
+    //                 },
+    //             ]
+    //         }
+    //         const headers = {
+    //             'Content-Type': "application/json",
+    //             "Authorization": `Bearer ${openAIApiKey}`,
+    //         }
+
+    //         return { headers, data };
+    //     }
+
+    //     let allNewsBlocks: Array<Array<Block>> = [];
+
+    //     try {
+    //         var message = `News fetched`;
+
+    //         for (let i=0 ; i<this.news.slice(0, 3).length ; i++) {
+    //                 const openAIResponse = await http.post(
+    //                     getOpenAIApiChatCompletion(),
+    //                     getOpenAIPayload(this.news[i].description),
+    //                 );
+
+    //                 const newsBlock = await buildNewsBlock(this.news[i]);
+    //                 allNewsBlocks.push(newsBlock);
+    //             }
+    //             await sendMessage(modify, room, appUser, message, allNewsBlocks);
+    //     } catch (err) {
+    //         console.error('Error generating OpenAI response ', err);
+    //     }
+    // }
+
+    static async detemineCategory(http: IHttp) {
+        const response = await http.get(`https://techcrunch.com/wp-json/wp/v2/categories/577055593`);
+        return response?.name; // will return the category in string format.
     }
 }

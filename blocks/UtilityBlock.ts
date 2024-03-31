@@ -26,10 +26,10 @@ export async function buildRSSNewsBlock(
     newsTitle: string,
     newsContent: string,
     newsLink: string,
-    newsImage: string,
-    newsSource: string,
-    newsAuthor: string,
-    newsPublishDate: string,
+    newsImage?: string,
+    newsSource?: string,
+    newsAuthor?: string,
+    newsPublishDate?: string,
 ) {
     const blocks: Block[] = [];
 
