@@ -44,7 +44,28 @@ export class Subscription {
         return subscriptions;
     }
 
-    public async deleteSubscription(): Promise<boolean> {
+    public async deleteSubscription(user: IUser, room: IRoom, interval): Promise<boolean> {
         // logic to remove subscription
+        try {
+            const associations: Array<RocketChatAssociationRecord> = [
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.MISC,
+                    `subscription`
+                ),
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.USER,
+                    `user:${user?.id}`
+                ),
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.ROOM,
+                    `room:${room?.id}`
+                ),
+            ];
+            await this.persistence.removeByAssociations(associations);
+        } catch (err) {
+            console.warn(err);
+            return false;
+        }
+        return true;
     }
 }

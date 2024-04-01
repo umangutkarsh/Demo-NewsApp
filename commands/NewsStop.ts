@@ -5,6 +5,8 @@ import { IUser } from '@rocket.chat/apps-engine/definition/users';
 import { sendMessage } from '../lib/sendMessage';
 import { buildNewsBlock } from '../blocks/UtilityBlock';
 import { CommandUtility } from './utils/commandUtility';
+import { IRoom } from '@rocket.chat/apps-engine/definition/rooms';
+import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 
 export interface NewsSlashCommandContext {
     app: DemoNewsApp,
@@ -30,15 +32,30 @@ export class NewsStop implements ISlashCommand {
         http: IHttp,
         persis: IPersistence
     ): Promise<void> {
-        const subcommands = context.getArguments();
         const room = context.getRoom();
         const sender = context.getSender();
         const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
-        const jobId = context.getArguments();
-        console.log(jobId);
-
-        await modify.getScheduler().cancelJob(jobId[0]);
+        // logic to remove subscription
+        try {
+            const associations: Array<RocketChatAssociationRecord> = [
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.MISC,
+                    `subscription`
+                ),
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.USER,
+                    `user:${appUser?.id}`
+                ),
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.ROOM,
+                    `room:${room?.id}`
+                ),
+            ];
+            await persis.removeByAssociations(associations);
+        } catch (err) {
+            console.warn(err);
+        }
 
     }
 }
