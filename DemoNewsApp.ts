@@ -11,7 +11,8 @@ import { NewsStop } from './commands/NewsStop';
 import { CommandUtility } from './commands/utils/commandUtility';
 import { NewsSchedule } from './commands/NewsSchedule';
 import { settings } from './config/Settings';
-import { DailyNewsProcessor } from './services/schedulers/DailyNewsProcessor';
+// import { DailyNewsProcessor } from './services/schedulers/DailyNewsProcessor';
+import { NewsGet } from './commands/NewsGet';
 
 export class DemoNewsApp extends App {
     constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
@@ -105,9 +106,11 @@ export class DemoNewsApp extends App {
     //     ]);
     // }
 
-    public async extendConfiguration(configuration: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
+    protected async extendConfiguration(configuration: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
         // other code
         // ...
-        configuration.scheduler.registerProcessors([new DailyNewsProcessor()])
+        // configuration.scheduler.registerProcessors([new DailyNewsProcessor()]);
+        configuration.slashCommands.provideSlashCommand(new NewsGet(this));
     }
+
 }

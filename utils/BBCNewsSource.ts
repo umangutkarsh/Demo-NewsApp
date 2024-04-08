@@ -76,27 +76,27 @@ async function fetchRssFeed(url: string): Promise<RssItem[]> {
     }
 }
 
-export class BBCNewsSource extends NewsSource {
-    news: NewsItem[] = [];
-    fetchUrl = `https://feeds.bbci.co.uk/news/science_and_environment/rss.xml`;
+// export class BBCNewsSource extends NewsSource {
+//     news: NewsItem[] = [];
+//     fetchUrl = `https://feeds.bbci.co.uk/news/science_and_environment/rss.xml`;
 
-    public async fetchNews(
-        app: DemoNewsApp,
-        context: SlashCommandContext,
-        read: IRead,
-        modify: IModify,
-        http: IHttp,
-        persistence: IPersistence,
-        filter?: {}
-    ): Promise<void> {
+//     public async fetchNews(
+//         app: DemoNewsApp,
+//         context: SlashCommandContext,
+//         read: IRead,
+//         modify: IModify,
+//         http: IHttp,
+//         persistence: IPersistence,
+//         filter?: {}
+//     ): Promise<void> {
 
-        (async () => {
-        try {
-            const items = await fetchRssFeed(this.fetchUrl);
-            console.log(items);
-        } catch (error) {
-            console.error('Error processing RSS feed:', error);
-        }
-        })();
-    }
-}
+//         (async () => {
+//         try {
+//             const items = await fetchRssFeed(this.fetchUrl);
+//             console.log(items);
+//         } catch (error) {
+//             console.error('Error processing RSS feed:', error);
+//         }
+//         })();
+//     }
+// }
